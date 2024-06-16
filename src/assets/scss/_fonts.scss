@@ -93,3 +93,17 @@
         url("https://cdn.jsdelivr.net/gh/websfont/eduAll/eduAll-Bold.ttf") format("truetype");
     font-display: swap;
 }
+
+@font-face {
+    font-family: "eduSaeeum";
+    font-weight: normal;
+    font-style: normal;
+    src: url("https://cdn.jsdelivr.net/gh/websfont/eduSaeeum/eduSaeeum.eot");
+    src: url("https://cdn.jsdelivr.net/gh/websfont/eduSaeeum/eduSaeeum.eot?#iefix") format("embedded-opentype"),
+        url("https://cdn.jsdelivr.net/gh/websfont/eduSaeeum/eduSaeeum.woff2") format("woff2"),
+        url("https://cdn.jsdelivr.net/gh/websfont/eduSaeeum/eduSaeeum.woff") format("woff"),
+        url("https://cdn.jsdelivr.net/gh/websfont/eduSaeeum/eduSaeeum.ttf") format("truetype");
+    font-display: swap;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Aclonica&family=Bungee&family=Lilita+One&family=Secular+One&display=swap');

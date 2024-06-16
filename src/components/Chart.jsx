@@ -2,13 +2,12 @@ import React, { forwardRef, useContext, useState, useEffect, useRef } from 'reac
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Modal from './Modal';
 
 import { FcCalendar } from 'react-icons/fc';
 import { MdFormatListBulletedAdd, MdOutlinePlayCircleFilled, MdClose, MdHive } from 'react-icons/md';
 import { MusicPlayerContext } from '../context/MusicPlayerProvider';
+import { ToastContainer, toast } from 'react-toastify';
 
 const CustomInput = forwardRef(({ value, onClick }, ref) => (
     <button onClick={onClick} ref={ref}>
@@ -18,7 +17,7 @@ const CustomInput = forwardRef(({ value, onClick }, ref) => (
 ));
 
 const Chart = ({ title, showCalendar, selectedDate, onDateChange, minDate, maxDate, data }) => {
-    const { addTrackToList, addTrackToEnd, playTrack } = useContext(MusicPlayerContext);
+    const { addTrackToList, addTrackToEnd, playTrack, musicData } = useContext(MusicPlayerContext);
     const chartRef = useRef(null);
 
     const [youtubeResults, setYoutubeResults] = useState([]);
@@ -49,15 +48,21 @@ const Chart = ({ title, showCalendar, selectedDate, onDateChange, minDate, maxDa
     };
 
     const handlePlayNow = (result) => {
-        const newTrack = {
-            title: result.snippet.title,
-            videoID: result.id.videoId,
-            imageURL: result.snippet.thumbnails.default.url,
-            artist: result.snippet.channelTitle,
-            rank: 1
-        };
-        addTrackToList(newTrack);
-        playTrack(0);
+        const trackIndex = musicData.findIndex(track => track.videoID === result.id.videoId);
+        if (trackIndex !== -1) {
+            playTrack(trackIndex);
+        } else {
+            const newTrack = {
+                title: result.snippet.title,
+                videoID: result.id.videoId,
+                imageURL: result.snippet.thumbnails.default.url,
+                artist: result.snippet.channelTitle,
+                rank: 1
+            };
+            if (addTrackToList(newTrack)) {
+                playTrack(0);
+            }
+        }
     };
 
     const handleAddToList = (result) => {
@@ -68,11 +73,12 @@ const Chart = ({ title, showCalendar, selectedDate, onDateChange, minDate, maxDa
             artist: result.snippet.channelTitle,
             rank: 1
         };
-        const added = addTrackToEnd(newTrack);
-        if (added) {
-            toast.success('해당 곡을 리스트에 추가했어요. 중복곡은 제외됩니다.');
-        } else {
+        const isDuplicate = musicData.some(track => track.videoID === newTrack.videoID);
+        if (isDuplicate) {
             toast.info('해당 곡을 리스트에 추가했어요. 중복곡은 제외됩니다.');
+        } else {
+            addTrackToEnd(newTrack);
+            toast.success('현재 플레이 리스트에 추가했습니다.');
         }
     };
 
@@ -90,8 +96,14 @@ const Chart = ({ title, showCalendar, selectedDate, onDateChange, minDate, maxDa
     const handleAddToPlaylist = (playlistId) => {
         const playlist = JSON.parse(localStorage.getItem(playlistId));
         if (playlist && selectedTrack) {
-            playlist.items.push(selectedTrack);
-            localStorage.setItem(playlistId, JSON.stringify(playlist));
+            const isDuplicate = playlist.items.some(track => track.videoID === selectedTrack.videoID);
+            if (!isDuplicate) {
+                playlist.items.push(selectedTrack);
+                localStorage.setItem(playlistId, JSON.stringify(playlist));
+                toast.success(`${playlist.name}에 곡을 추가했어요. 중복 곡은 제외됩니다.`);
+            } else {
+                toast.info(`${playlist.name}에 곡을 추가했어요. 중복 곡은 제외됩니다.`);
+            }
         }
     };
 
@@ -147,7 +159,7 @@ const Chart = ({ title, showCalendar, selectedDate, onDateChange, minDate, maxDa
             </section>
             {youtubeResults.length > 0 && (
                 <section className='youtube-result'>
-                    <h3>🧑🏻‍💻 👉 "{selectedTitle}"에 대한 유튜브 검색 결과입니다.</h3>
+                    <h3>"{selectedTitle}"에 대한 유튜브 검색 결과입니다.</h3>
                     <ul>
                         {youtubeResults.map((result, index) => (
                             <li key={index}>
@@ -168,7 +180,6 @@ const Chart = ({ title, showCalendar, selectedDate, onDateChange, minDate, maxDa
                     <span className='close' onClick={() => setYoutubeResults([])}><MdClose /></span>
                 </section>
             )}
-            <ToastContainer />
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

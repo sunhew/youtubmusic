@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Header from "./components/Header";
 import Main from "./components/Main";
@@ -12,6 +14,7 @@ import ChartList from "./pages/ChartList";
 import PlayList from "./pages/PlayList";
 import MusicPlayerProvider from "./context/MusicPlayerProvider";
 import SearchResults from "./components/SearchResults";
+import DarkModeToggle from "./context/DarkModeToggle";
 
 const App = () => {
     return (
@@ -19,6 +22,7 @@ const App = () => {
             <BrowserRouter>
                 <Header />
                 <Main>
+                    <DarkModeToggle />
                     <Search />
                     <Routes>
                         <Route path="/" element={<Home />} />
@@ -29,6 +33,7 @@ const App = () => {
                     </Routes>
                 </Main>
                 <Aside />
+                <ToastContainer />
             </BrowserRouter>
         </MusicPlayerProvider>
     );

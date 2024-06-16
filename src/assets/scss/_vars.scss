@@ -1,10 +1,11 @@
 :root {
-    --fontJ: "theJamsil";
+    --fontJ: "eduSaeeum";
     --fontE: "eduAll";
 
-    --mainBg: #F6F8F9;
-    --pointColor: #7D57FF;
-    --pointBg: #ededff;
+    --mainBg: #f6fdfa;
+    --pointColor: #7ddcd7;
+    --pointColorhover: #c9f1ef;
+    --pointBg: #c0e0e042;
 
     --black: #000;
     --black100: #111;
@@ -22,6 +23,17 @@
     --white400: #cfcfcf;
     --white500: #c0c0c0;
 
+    --scrollbarThumbGradientStart: #c6e2ff;
+    --scrollbarThumbGradientEnd: #5779FF;
+    --scrollbarTrack: #f1f1f1;
+    --hoverBackgroundColor: rgba(87, 121, 255, 0.8); // 추가
+    --trackArtistColor: #666; // 추가
+    --progressBarBackground: #82a2c038; // 추가
+    --shuffleActiveColor: #FF5733; // 추가
+    --controlColor: #989898; // 추가
+    --controlBgGradientStart: #b6dcda; // 추가
+    --controlBgGradientEnd: #398fb7; // 추가
+
     // 폰트 셋팅
     font-family: var(--fontE);
     font-size: 16px;
@@ -38,5 +50,46 @@
     @media (max-width: 800px) {
         font-size: 14px;
         line-height: 1.4;
+    }
+}
+
+body.dark-mode {
+    --mainBg: #1e1e1e;
+    --pointColor: #5e99aa;
+    --pointColorhover: #4a8191;
+    --pointBg: #333;
+
+    --black: #fff;
+    --black100: #eee;
+    --black200: #ddd;
+    --black300: #ccc;
+    --black400: #bbb;
+    --black500: #aaa;
+    --black600: #999;
+    --black700: #888;
+
+    --white: #000;
+    --white100: #111;
+    --white200: #222;
+    --white300: #333;
+    --white400: #444;
+    --white500: #555;
+}
+
+button.dark-mode-toggle {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    position: fixed;
+    top: 1rem;
+    right: 24.5rem;
+
+    &:hover {
+        background-color: var(--button-hover-background);
+        color: var(--button-hover-text-color);
     }
 }

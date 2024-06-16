@@ -22,7 +22,7 @@ const ChartList = () => {
 
   return (
     <Chart
-      title={`😜 ${id} 챠트 Top100`}
+      title={` ${id} 챠트 Top100`}
       data={data}
       showCalendar={true}
       selectedDate={selectedDate}

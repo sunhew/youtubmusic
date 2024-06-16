@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { MusicPlayerContext } from '../context/MusicPlayerProvider';
-import { IoMusicalNotes, IoPlaySkipForward, IoPlaySkipBack, IoPlay, IoPause, IoRepeat, IoShuffleOutline } from 'react-icons/io5';
+import { IoPlaySkipForward, IoPlaySkipBack, IoPlay, IoPause, IoRepeat, IoShuffleOutline, IoTrash } from 'react-icons/io5';
 import ReactPlayer from 'react-player';
 
 const Aside = () => {
@@ -20,21 +20,22 @@ const Aside = () => {
     isShuffling,
     toggleRepeat,
     isRepeating,
-    handleTrackEnd
+    handleTrackEnd,
+    clearPlaylist,
+    removeTrack,
+    volume,        // 추가
+    updateVolume   // 추가
   } = useContext(MusicPlayerContext);
 
   const currentTrackRef = useRef(null);
   const playerRef = useRef(null);
+  const [showDelete, setShowDelete] = useState(null);
 
   useEffect(() => {
     if (currentTrackRef.current) {
       currentTrackRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [currentTrackIndex]);
-
-  if (musicData.length === 0) {
-    return <aside id="aside">Loading...</aside>;
-  }
 
   const currentTrack = musicData[currentTrackIndex];
 
@@ -56,6 +57,10 @@ const Aside = () => {
     }
   };
 
+  const handleVolumeChange = (event) => {
+    updateVolume(parseFloat(event.target.value));
+  };
+
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -63,7 +68,7 @@ const Aside = () => {
   };
 
   const handleTrackEndModified = () => {
-    if (isRepeating) {
+    if (isRepeating === 1) {
       playerRef.current.seekTo(0);
       playTrack(currentTrackIndex);
     } else {
@@ -74,9 +79,7 @@ const Aside = () => {
   return (
     <aside id="aside">
       <div className="play-now">
-        <h2>
-          <IoMusicalNotes /> Now Playing
-        </h2>
+        <h2>Now Playing</h2>
         <div className="thumb">
           <div className="img">
             {currentTrack && (
@@ -87,6 +90,7 @@ const Aside = () => {
                 width="100%"
                 height="100%"
                 playing={isPlaying}
+                volume={volume} // 추가: 볼륨 조절
                 onEnded={handleTrackEndModified}
                 onProgress={handleProgress}
                 onDuration={handleDuration}
@@ -130,25 +134,51 @@ const Aside = () => {
             <span className="next" onClick={nextTrack}>
               <IoPlaySkipForward />
             </span>
-            <span className={`repeat ${isRepeating ? 'active' : ''}`} onClick={toggleRepeat}>
+            <span className={`repeat ${isRepeating === 0 ? '' : isRepeating === 1 ? 'repeat-one' : 'repeat-all'}`} onClick={toggleRepeat}>
               <IoRepeat />
             </span>
           </div>
         </div>
+
+        <div className="volume"> {/* 추가: 볼륨 조절 */}
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={handleVolumeChange}
+          />
+        </div>
       </div>
 
       <div className="play-list">
-        <h3><IoMusicalNotes /> Play list</h3>
+        <h3>
+          Play list
+          <button className="clear-playlist" onClick={clearPlaylist}>
+            <IoTrash /> 전체 삭제
+          </button>
+        </h3>
         <ul>
           {musicData.map((track, index) => (
             <li
               key={index}
               ref={index === currentTrackIndex ? currentTrackRef : null}
+              onMouseEnter={() => setShowDelete(index)}
+              onMouseLeave={() => setShowDelete(null)}
               onClick={() => playTrack(index)}
               className={index === currentTrackIndex ? 'current-track' : ''}
             >
               <span className="img" style={{ backgroundImage: `url(${track.imageURL})` }}></span>
               <span className="title">{track.title}</span>
+              {showDelete === index && (
+                <button className="delete-track" onClick={(e) => {
+                  e.stopPropagation();
+                  removeTrack(index);
+                }}>
+                  <IoTrash />
+                </button>
+              )}
             </li>
           ))}
         </ul>

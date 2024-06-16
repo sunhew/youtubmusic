@@ -9,7 +9,7 @@ import Modal from './Modal';
 
 const SearchResults = () => {
     const { searchID } = useParams();
-    const { addTrackToList, addTrackToEnd, playTrack } = useContext(MusicPlayerContext);
+    const { addTrackToList, addTrackToEnd, playTrack, musicData } = useContext(MusicPlayerContext);
 
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -70,15 +70,21 @@ const SearchResults = () => {
     };
 
     const handlePlayNow = (video) => {
-        const newTrack = {
-            title: video.snippet.title,
-            videoID: video.id.videoId,
-            imageURL: video.snippet.thumbnails.default.url,
-            artist: video.snippet.channelTitle,
-            rank: 1
-        };
-        addTrackToList(newTrack);
-        playTrack(0);
+        const trackIndex = musicData.findIndex(track => track.videoID === video.id.videoId);
+        if (trackIndex !== -1) {
+            playTrack(trackIndex);
+        } else {
+            const newTrack = {
+                title: video.snippet.title,
+                videoID: video.id.videoId,
+                imageURL: video.snippet.thumbnails.default.url,
+                artist: video.snippet.channelTitle,
+                rank: 1
+            };
+            if (addTrackToList(newTrack)) {
+                playTrack(0);
+            }
+        }
         setOverlayVisible(false);
     };
 
@@ -90,13 +96,13 @@ const SearchResults = () => {
             artist: result.snippet.channelTitle,
             rank: 1
         };
-        const added = addTrackToEnd(newTrack);
-        if (added) {
-            toast.success('해당 곡을 리스트에 추가했어요. 중복곡은 제외됩니다.');
-        } else {
+        const isDuplicate = musicData.some(track => track.videoID === newTrack.videoID);
+        if (isDuplicate) {
             toast.info('해당 곡을 리스트에 추가했어요. 중복곡은 제외됩니다.');
+        } else {
+            addTrackToEnd(newTrack);
+            toast.success('현재 플레이 리스트에 추가했습니다.');
         }
-        setOverlayVisible(false);
     };
 
     const handleAddToPlaylistClick = (result) => {
@@ -113,8 +119,14 @@ const SearchResults = () => {
     const handleAddToPlaylist = (playlistId) => {
         const playlist = JSON.parse(localStorage.getItem(playlistId));
         if (playlist && selectedTrack) {
-            playlist.items.push(selectedTrack);
-            localStorage.setItem(playlistId, JSON.stringify(playlist));
+            const isDuplicate = playlist.items.some(track => track.videoID === selectedTrack.videoID);
+            if (!isDuplicate) {
+                playlist.items.push(selectedTrack);
+                localStorage.setItem(playlistId, JSON.stringify(playlist));
+                toast.success(`${playlist.name}에 곡을 추가했어요. 중복 곡은 제외됩니다.`);
+            } else {
+                toast.info(`${playlist.name}에 곡을 추가했어요. 중복 곡은 제외됩니다.`);
+            }
         }
     };
 

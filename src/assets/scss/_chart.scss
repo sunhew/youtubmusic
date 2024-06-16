@@ -9,7 +9,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-        background: linear-gradient(to bottom, #c6e2ff, #5779FF);
+        background: linear-gradient(to bottom, var(--scrollbarThumbGradientStart), var(--scrollbarThumbGradientEnd));
         border-radius: 6px;
         background-size: 100% 200%;
         background-position: 0% 0%;
@@ -17,7 +17,7 @@
     }
 
     &::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: var(--scrollbarTrack);
     }
 
     >.title {
@@ -28,6 +28,7 @@
         justify-content: space-around;
         padding-bottom: 15px;
         border-bottom: 1px solid var(--black700);
+        color: var(--black);
 
         h2 {
             font-weight: 900;
@@ -90,6 +91,8 @@
 
                 .title {
                     flex: 1;
+                    font-size: 1.5rem;
+                    color: var(--black);
                 }
 
                 .album {
@@ -116,7 +119,7 @@
     right: 400px;
     bottom: 0;
     height: 370px;
-    background-color: var(--pointBg);
+    background-color: var(--white100);
     padding: 2rem;
 
     h3 {
@@ -147,6 +150,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            cursor: pointer;
+            color: var(--black);
         }
 
         .playNow {
