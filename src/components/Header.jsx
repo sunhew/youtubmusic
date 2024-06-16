@@ -61,7 +61,7 @@ const Header = () => {
         </ul>
         <h2>playlist</h2>
         <ul>
-          <li><Link to='/mymusic'><span className='icon2'><FcRating /></span>Mymusic</Link></li>
+          <li><Link to='/mymusic'><span className='icon2'></span>제작자 플레이리스트</Link></li>
           <li>
             {showInput ? (
               <div className="input-container">
@@ -72,12 +72,12 @@ const Header = () => {
                   placeholder='Enter playlist name'
                 />
                 <div className="input-buttons">
-                  <button onClick={handleAddItem}>Add</button>
-                  <button onClick={handleCancel}>Cancel</button>
+                  <button onClick={handleAddItem}>만들기</button>
+                  <button onClick={handleCancel}>취소</button>
                 </div>
               </div>
             ) : (
-              <Link to='#' onClick={handleAddClick}><span className='icon2'><FcPlus /></span>Create</Link>
+              <Link to='#' onClick={handleAddClick}><span className='icon2'><FcPlus /></span>플레이리스트 생성</Link>
             )}
           </li>
         </ul>
