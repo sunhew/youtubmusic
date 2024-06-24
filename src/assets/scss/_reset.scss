@@ -64,6 +64,7 @@ h4,
 h5,
 h6 {
     font-weight: normal;
+    color: var(--black);
 }
 
 ul {
@@ -95,6 +96,11 @@ select {
     border-radius: 0;
     font-size: 16px;
     border: 0;
+    color: var(--black);
+}
+
+svg {
+    color: var(--black300);
 }
 
 // 스킵메뉴
